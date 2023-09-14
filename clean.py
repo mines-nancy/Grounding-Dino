@@ -2,6 +2,7 @@ from groundingdino.util.inference import load_model, load_image, predict, annota
 from torchvision.ops import box_convert
 from moviepy.editor import VideoFileClip
 from shapely import Polygon
+from shapely.geometry import Point
 from PIL import Image
 import groundingdino.datasets.transforms as T
 import numpy as np
@@ -79,6 +80,7 @@ def gestion_dir(Path, image_modif, image, txt):
 
 
 def compute(image_source, image, BOX_TRESHOLD, boxes, logits, phrases):
+    roi_polygon = Polygon([(0, 200), (330, 95), (85, 140), (75, 110), (360, 60), (385, 100), (240, 478), (0, 478)])
     img_h, img_w, _ = image_source.shape
 
     h, w, _ = image_source.shape
@@ -90,7 +92,7 @@ def compute(image_source, image, BOX_TRESHOLD, boxes, logits, phrases):
         x1, y1, x2, y2 = map(int, xyxy)
         w = abs(x2-x1)
         h = abs(y2-y1)
-        if logit >= BOX_TRESHOLD and w*h < 0.3 * img_h * img_w :
+        if logit >= BOX_TRESHOLD and w*h < 0.3 * img_h * img_w and roi_polygon.contains(Point(x1, y1)) or roi_polygon.contains(Point(x2, y2)):
             data.append(((x1, y1), (x2, y2), logit, phrase))
 
     new_data = []
