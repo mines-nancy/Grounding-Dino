@@ -19,7 +19,7 @@ from io import BytesIO
 
 
 TEXT_PROMPT = "vehicle"
-model = load_model(
+model = YOLO(
     "groundingdino/config/GroundingDINO_SwinB_cfg.py",
     "weights/groundingdino_swinb_cogcoor.pth"
 )
@@ -28,8 +28,7 @@ phrase_colors = {
     "car": (255, 0, 0),    # bleu
     "van": (0, 255, 0),    # vert
     "truck": (0, 0, 255),  # rouge
-    "bike": (0, 0, 128),   # marron
-    "moto": (0, 215, 255), # jaune
+    "bike": (0, 0, 128),   # marron    "moto": (0, 215, 255), # jaune
     "person": (193, 182, 255),  # rose
     "vehicle": (255, 255, 255),  # noir
 }
@@ -121,8 +120,7 @@ def compute(image_source, image, BOX_TRESHOLD, boxes, logits, phrases):
                     if intersection.area == 0 or rect_i.area == 0 or rect_j.area == 0:
                         continue
                     if intersection.area / rect_i.area > 0.7 or intersection.area / rect_j.area > 0.7:
-                        already_merged_ids.add(i)
-                        already_merged_ids.add(j)
+                        already_merged_ids.add(i)                        already_merged_ids.add(j)
                         merge.append(data_i)
                         merge.append(data_j)
             if len(merge) == 0:
